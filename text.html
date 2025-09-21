@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Styled Text Display</title>
+  <style>
+    :root {
+      --bg-color: #f5f5f5;
+      --text-color: #333;
+      --input-bg: #fff;
+      --output-bg: #fff;
+      --border-color: #ccc;
+    }
+    [data-theme="dark"] {
+      --bg-color: #2e2e2e;
+      --text-color: #eee;
+      --input-bg: #3a3a3a;
+      --output-bg: #3a3a3a;
+      --border-color: #555;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: var(--input-bg);
+      border-bottom: 1px solid var(--border-color);
+    }
+    #logo {
+      height: 46px;
+    }
+    h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+    main {
+      flex: 1;
+      overflow: hidden;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 15px;
+      align-items: flex-end;
+      max-width: 800px;
+      width: 100%;
+    }
+    .controls label {
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+      min-width: 130px;
+    }
+    .controls select,
+    .controls input[type="color"],
+    .controls input[type="number"],
+    .controls button {
+      padding: 5px;
+      background: var(--input-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+    /* Center wrapper */
+    .box-container {
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    #textInput,
+    #outputBox {
+      width: 100%;
+      height: 120px; /* same height */
+      padding: 12px;
+      font-size: 3.5rem;
+      font-weight: 100;
+      line-height: 1.5em;
+      resize: none;
+      overflow-y: auto;
+      color: var(--text-color);
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      white-space: pre-wrap;
+    }
+    #historyBox {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: var(--output-bg);
+      overflow-y: auto;
+      font-size: 16px;  /* fixed medium font */
+      line-height: 1.5em;
+      font-family: Arial, sans-serif;
+      white-space: pre-wrap;
+      width: 100%;
+      min-height: 120px;
+    }
+    .history-line {
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <header>
+    <h2>Centre for Oneness Translation Tool</h2>
+    <img id="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzzj1Po7YVgJpYghHc0Ov5tljVVqBcMZslFw&s" alt="Logo" />
+  </header>
+  <main>
+    <div class="controls">
+      <label>Font Size:
+        <select id="fontSizePreset" onchange="applyInputStyles(); clearCustomSize();">
+          <option value="8">8px</option><option value="10">10px</option><option value="12">XS</option>
+          <option value="14">Small</option><option value="16" selected>Medium</option>
+          <option value="18">18px</option><option value="20">Large</option><option value="24">XL</option>
+          <option value="28">28px</option><option value="32">32px</option><option value="36">36px</option>
+          <option value="40">40px</option><option value="48">48px</option>
+        </select>
+      </label>
+      <label>Custom Size (px):
+        <input type="number" id="customFontSize" placeholder="e.g. 30" min="8" max="100" oninput="applyInputStyles()">
+      </label>
+      <label>Font Color:
+        <input type="color" id="fontColor" value="#000000" onchange="applyInputStyles()">
+      </label>
+      <label>Background Color:
+        <select id="bgColor" onchange="applyInputStyles()">
+          <option value="white">White</option><option value="black">Black</option><option value="red">Red</option>
+          <option value="blue">Blue</option><option value="green">Green</option><option value="yellow">Yellow</option>
+          <option value="orange">Orange</option><option value="purple">Purple</option><option value="lightgray">Light Gray</option>
+        </select>
+      </label>
+      <label>Font Family:
+        <select id="fontType" onchange="applyInputStyles()">
+          <option value="Arial">Arial</option><option value="Georgia">Georgia</option><option value="Courier New">Courier New</option>
+          <option value="Verdana">Verdana</option><option value="Times New Roman">Times New Roman</option>
+          <option value="Comic Sans MS">Comic Sans MS</option><option value="Tahoma">Tahoma</option>
+        </select>
+      </label>
+      <label>Text Align:
+        <select id="textAlign" onchange="applyInputStyles()">
+          <option value="left" selected>Left</option><option value="center">Center</option>
+          <option value="right">Right</option><option value="justify">Justify</option>
+        </select>
+      </label>
+      <label style="min-width: auto;">&nbsp;
+        <button id="themeToggle">🌙 Dark Mode</button>
+      </label>
+    </div>
+
+    <div class="box-container">
+      <textarea id="textInput" placeholder="Shift+Enter = new line, Enter = show last 3 lines"></textarea>
+      <div id="outputBox"></div>
+      <div id="historyBox"></div>
+    </div>
+  </main>
+
+  <script>
+    const textInput = document.getElementById('textInput');
+    const outputBox = document.getElementById('outputBox');
+    const historyBox = document.getElementById('historyBox');
+    const themeToggle = document.getElementById('themeToggle');
+
+    // Apply styles only to input + output
+    function applyInputStyles() {
+      const preset = document.getElementById('fontSizePreset').value;
+      const custom = document.getElementById('customFontSize').value;
+      const size = custom ? `${custom}px` : `${preset}px`;
+      const color = document.getElementById('fontColor').value;
+      const bg = document.getElementById('bgColor').value;
+      const fam = document.getElementById('fontType').value;
+      const align = document.getElementById('textAlign').value;
+
+      Object.assign(textInput.style, {
+        fontSize: size,
+        color: color,
+        backgroundColor: bg,
+        fontFamily: fam,
+        textAlign: align
+      });
+    }
+
+    function clearCustomSize() {
+      document.getElementById('customFontSize').value = '';
+    }
+
+    // Press Enter → update output + add to history
+    textInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        const lines = textInput.value.split('\n').filter(l => l.trim() !== '');
+        const last3 = lines.slice(-3).join('\n');
+
+        if (last3.trim() !== "") {
+          // update output box with input styles
+          outputBox.innerText = last3;
+          outputBox.style.cssText = textInput.style.cssText;
+
+          // add to history (fixed style)
+          const historyLine = document.createElement("div");
+          historyLine.className = "history-line";
+          historyLine.innerText = last3;
+          historyBox.appendChild(historyLine);
+          historyBox.scrollTop = historyBox.scrollHeight;
+
+          // clear input
+          textInput.value = "";
+        }
+      }
+    });
+
+    themeToggle.addEventListener('click', () => {
+      const body = document.body;
+      const currentTheme = body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      body.setAttribute('data-theme', newTheme);
+      themeToggle.textContent = newTheme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode';
+    });
+
+    window.onload = applyInputStyles;
+  </script>
+</body>
+</html>
